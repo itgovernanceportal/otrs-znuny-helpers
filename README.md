@@ -7,6 +7,7 @@ This is the repository for the <a href="https://itgovernanceportal.com">IT Gover
 
 migration scripts for UBUNTU can be found here
 [migrationHelpers](https://github.com/itgovernanceportal/otrs-znuny-helpers/tree/main/migrationHelpers)
+The description for the scripts can be found [How to upgrade from OTRS 5 to Znuny 6](https://itgovernanceportal.com/otrs/upgrade-otrs-5-to-znuny-6-ubuntu-20-04/)
 
 # You want to contribute?
 
