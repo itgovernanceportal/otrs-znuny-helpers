@@ -93,19 +93,20 @@ echo $CURR_DIR
 # Create a symlink
 ln -s $CURR_DIR /opt/otrs
 
-# Check for missing modules and add required modules
 cd /opt/otrs
+
+# Check for missing modules and add required modules
 ./bin/otrs.CheckModules.pl --all
 
 
 
 echo "starting DB migration"
-sudo -u otrs ./scripts/DBUpdate-to-6.pl || exit 1
+sudo -u otrs ./scripts/MigrateToZnuny6_1.pl || exit 1
 
 
 echo "clean caches"
-sudo -u otrs /opt/otrs/bin/otrs.Console.pl Maint::Cache::Delete
-sudo -u otrs /opt/otrs/bin/otrs.Console.pl Maint::Session::DeleteAll
+sudo -u otrs ./bin/otrs.Console.pl Maint::Cache::Delete
+sudo -u otrs ./bin/otrs.Console.pl Maint::Session::DeleteAll
 
 
 
