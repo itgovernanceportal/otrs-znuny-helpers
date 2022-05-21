@@ -50,31 +50,46 @@ fi
 CURR_DATE=$(date '+%Y-%m-%d-%H-%M-%S')
 #echo $CURR_DATE
 
-OLD_VERSION=`grep -r "6\.0\." /opt/otrs/RELEASE|awk -P '{print $3}'`
+
+VER_ZNUNY_OLD_MAJOR=6
+VER_ZNUNY_OLD_MINOR=0
+VER_ZNUNY_MAJOR=6
+VER_ZNUNY_MINOR=1
+
+
+OLD_VERSION=`grep -r "$VER_ZNUNY_OLD_MAJOR\.$VER_ZNUNY_OLD_MINOR\." /opt/otrs/RELEASE|awk -P '{print $3}'`
 echo $OLD_VERSION
 
 
-# needed packages for znuny 6.1
+# needed packages for znuny
 apt update
 apt install -y jq
 
 
-# Download latest Znuny 6.1
+# Download latest Znuny
 cd /opt
-wget https://download.znuny.org/releases/znuny-latest-6.1.tar.gz
+wget https://download.znuny.org/releases/znuny-latest-$VER_ZNUNY_MAJOR.$VER_ZNUNY_MINOR.tar.gz || exit 1
 
 # Extract
-tar xfz znuny-latest-6.1.tar.gz
+tar xfz znuny-latest-$VER_ZNUNY_MAJOR.$VER_ZNUNY_MINOR.tar.gz || exit 1
 
 # cd into extracted dir
-cd `tar ztf znuny-latest-6.1.tar.gz |grep "znuny-6\.1\../$"`
+cd `tar ztf znuny-latest-$VER_ZNUNY_MAJOR.$VER_ZNUNY_MINOR.tar.gz |grep "znuny-$VER_ZNUNY_MAJOR\.$VER_ZNUNY_MINOR\../$"` || exit 1
+echo -n "current dir: "
+pwd
+
 
 # Set permissions
 ./bin/otrs.SetPermissions.pl || exit 1
 
 # Restore Kernel/Config.pm, articles, etc.
-cp -av /opt/otrs/Kernel/Config.pm ./Kernel/
-mv /opt/otrs/var/article/* ./var/article/
+cp -av /opt/otrs/Kernel/Config.pm ./Kernel/ || exit 1
+
+# copy articles if existing
+article_count=$(find /opt/otrs/var/article/ -maxdepth 1 -name '*.zip' | wc -l)
+if [ $article_count -gt 0 ] ; then
+   mv /opt/otrs/var/article/* ./var/article/ || exit 1
+fi
 
 # Restore dotfiles from the homedir to the new directory
 for f in $(find /opt/otrs -maxdepth 1 -type f -name .\* -not -name \*.dist); do cp -av "$f" ./; done
@@ -101,7 +116,7 @@ cd /opt/otrs
 
 
 echo "starting DB migration"
-sudo -u otrs ./scripts/MigrateToZnuny6_1.pl || exit 1
+sudo -u otrs ./scripts/MigrateToZnuny6_$VER_ZNUNY_MINOR.pl || exit 1
 
 
 echo "clean caches"
