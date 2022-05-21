@@ -50,7 +50,14 @@ fi
 CURR_DATE=$(date '+%Y-%m-%d-%H-%M-%S')
 #echo $CURR_DATE
 
-OLD_VERSION=`grep -r "6\.0\." /opt/otrs/RELEASE|awk -P '{print $3}'`
+
+VER_ZNUNY_OLD_MAJOR=6
+VER_ZNUNY_OLD_MINOR=1
+VER_ZNUNY_MAJOR=6
+VER_ZNUNY_MINOR=1
+
+
+OLD_VERSION=`grep -r "$VER_ZNUNY_OLD_MAJOR\.$VER_ZNUNY_OLD_MINOR\." /opt/otrs/RELEASE|awk -P '{print $3}'`
 echo $OLD_VERSION
 
 
@@ -61,13 +68,13 @@ apt install -y jq
 
 # Download latest Znuny 6.2
 cd /opt
-wget https://download.znuny.org/releases/znuny-latest-6.2.tar.gz
+wget https://download.znuny.org/releases/znuny-latest-$VER_ZNUNY_MAJOR.$VER_ZNUNY_MINOR.tar.gz
 
 # Extract
-tar xfz znuny-latest-6.2.tar.gz
+tar xfz znuny-latest-$VER_ZNUNY_MAJOR.$VER_ZNUNY_MINOR.tar.gz
 
 # cd into extracted dir
-cd `tar ztf znuny-latest-6.2.tar.gz |grep "znuny-6\.1\../$"`
+cd `tar ztf znuny-latest-$VER_ZNUNY_MAJOR.$VER_ZNUNY_MINOR.tar.gz |grep "znuny-$VER_ZNUNY_MAJOR\.$VER_ZNUNY_MINOR\../$"`
 
 # Set permissions
 ./bin/otrs.SetPermissions.pl || exit 1
