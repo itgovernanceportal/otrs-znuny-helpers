@@ -54,7 +54,7 @@ CURR_DATE=$(date '+%Y-%m-%d-%H-%M-%S')
 VER_ZNUNY_OLD_MAJOR=6
 VER_ZNUNY_OLD_MINOR=1
 VER_ZNUNY_MAJOR=6
-VER_ZNUNY_MINOR=1
+VER_ZNUNY_MINOR=2
 
 
 OLD_VERSION=`grep -r "$VER_ZNUNY_OLD_MAJOR\.$VER_ZNUNY_OLD_MINOR\." /opt/otrs/RELEASE|awk -P '{print $3}'`
@@ -63,25 +63,26 @@ echo $OLD_VERSION
 
 # needed packages for znuny 6.2
 apt update
-apt install -y jq
+apt install -y libspreadsheet-xlsx-perl
 
 
 # Download latest Znuny 6.2
 cd /opt
-wget https://download.znuny.org/releases/znuny-latest-$VER_ZNUNY_MAJOR.$VER_ZNUNY_MINOR.tar.gz
+wget https://download.znuny.org/releases/znuny-latest-$VER_ZNUNY_MAJOR.$VER_ZNUNY_MINOR.tar.gz || exit 1
 
 # Extract
-tar xfz znuny-latest-$VER_ZNUNY_MAJOR.$VER_ZNUNY_MINOR.tar.gz
+tar xfz znuny-latest-$VER_ZNUNY_MAJOR.$VER_ZNUNY_MINOR.tar.gz || exit 1
 
 # cd into extracted dir
-cd `tar ztf znuny-latest-$VER_ZNUNY_MAJOR.$VER_ZNUNY_MINOR.tar.gz |grep "znuny-$VER_ZNUNY_MAJOR\.$VER_ZNUNY_MINOR\../$"`
+cd `tar ztf znuny-latest-$VER_ZNUNY_MAJOR.$VER_ZNUNY_MINOR.tar.gz |grep "znuny-$VER_ZNUNY_MAJOR\.$VER_ZNUNY_MINOR\../$"` || exit 1
+pwd
 
 # Set permissions
 ./bin/otrs.SetPermissions.pl || exit 1
 
 # Restore Kernel/Config.pm, articles, etc.
-cp -av /opt/otrs/Kernel/Config.pm ./Kernel/
-mv /opt/otrs/var/article/* ./var/article/
+cp -av /opt/otrs/Kernel/Config.pm ./Kernel/ || exit 1
+mv /opt/otrs/var/article/* ./var/article/ || exit 1
 
 # Restore dotfiles from the homedir to the new directory
 for f in $(find /opt/otrs -maxdepth 1 -type f -name .\* -not -name \*.dist); do cp -av "$f" ./; done
