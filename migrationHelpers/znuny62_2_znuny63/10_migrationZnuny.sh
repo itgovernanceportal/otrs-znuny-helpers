@@ -63,7 +63,7 @@ echo $OLD_VERSION
 
 # needed packages for znuny
 apt update
-apt install -y libspreadsheet-xlsx-perl
+apt install -y libhash-merge-perl
 
 
 # Download latest Znuny
@@ -75,9 +75,9 @@ tar xfz znuny-latest-$VER_ZNUNY_MAJOR.$VER_ZNUNY_MINOR.tar.gz || exit 1
 
 # cd into extracted dir
 cd `tar ztf znuny-latest-$VER_ZNUNY_MAJOR.$VER_ZNUNY_MINOR.tar.gz |grep "znuny-$VER_ZNUNY_MAJOR\.$VER_ZNUNY_MINOR\../$"` || exit 1
+echo -n "current dir: "
 pwd
 
-exit 1
 
 # Set permissions
 ./bin/otrs.SetPermissions.pl || exit 1
@@ -116,7 +116,7 @@ cd /opt/otrs
 
 
 echo "starting DB migration"
-sudo -u otrs ./scripts/MigrateToZnuny$VER_ZNUNY_MAJOR_$VER_ZNUNY_MINOR.pl || exit 1
+sudo -u otrs ./scripts/MigrateToZnuny6_$VER_ZNUNY_MINOR.pl || exit 1
 
 
 echo "clean caches"
