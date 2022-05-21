@@ -24,7 +24,7 @@
 #  Boston, MA 02110-1301, USA
 
 # debug
-set -xv
+#set -xv
 
 ZNUNY_PREPARE_DIR=$1
 OTRS_INSTALL_DIR=$2
@@ -49,6 +49,10 @@ fi
 
 CURR_DATE=$(date '+%Y-%m-%d-%H-%M-%S')
 #echo $CURR_DATE
+
+# needed packages for znuny 6.1
+apt update
+apt install -y jq
 
 
 # Download latest Znuny 6.1
@@ -90,7 +94,7 @@ ln -s $CURR_DIR /opt/otrs
 cd /opt/otrs
 ./bin/otrs.CheckModules.pl --all
 
-
+exit 1
 
 
 
