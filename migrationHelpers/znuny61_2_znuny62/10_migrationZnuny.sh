@@ -85,7 +85,7 @@ cp -av /opt/otrs/Kernel/Config.pm ./Kernel/ || exit 1
 
 # copy articles if existing
 article_count=$(find /opt/otrs/var/article/ -maxdepth 1 -name '*.zip' | wc -l)
-if [ $count -gt 0 ] ; then
+if [ $article_count -gt 0 ] ; then
    mv /opt/otrs/var/article/* ./var/article/ || exit 1
 fi
 
