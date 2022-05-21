@@ -50,6 +50,10 @@ fi
 CURR_DATE=$(date '+%Y-%m-%d-%H-%M-%S')
 #echo $CURR_DATE
 
+OLD_VERSION=`grep -r "6\.0\." /opt/otrs/RELEASE|awk -P '{print $3}'`
+echo $OLD_VERSION
+
+
 # needed packages for znuny 6.1
 apt update
 apt install -y jq
@@ -66,7 +70,7 @@ tar xfz znuny-latest-6.1.tar.gz
 cd `tar ztf znuny-latest-6.1.tar.gz |grep "znuny-6\.1\../$"`
 
 # Set permissions
-./bin/otrs.SetPermissions.pl
+./bin/otrs.SetPermissions.pl || exit 1
 
 # Restore Kernel/Config.pm, articles, etc.
 cp -av /opt/otrs/Kernel/Config.pm ./Kernel/
@@ -78,11 +82,10 @@ for f in $(find /opt/otrs -maxdepth 1 -type f -name .\* -not -name \*.dist); do 
 # Restore modified and custom cron job
 for f in $(find /opt/otrs/var/cron -maxdepth 1 -type f -name .\* -not -name \*.dist); do cp -av "$f" ./var/cron/; done
 
-OLD_VERSION=`grep -r "6\.0\." /opt/otrs/RELEASE|awk -P '{print $3}'`
-echo $OLD_VERSION
 
-# Delete the old symlink
-mv /opt/otrs /opt/otrs-$OLD_VERSION
+echo "move current otrs to backup folder"
+mv /opt/otrs /opt/otrs-obsolete-$CURR_DATE
+
 
 CURR_DIR=`pwd`
 echo $CURR_DIR
@@ -94,90 +97,19 @@ ln -s $CURR_DIR /opt/otrs
 cd /opt/otrs
 ./bin/otrs.CheckModules.pl --all
 
-exit 1
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-echo "move current otrs to backup folder"
-mv /opt/otrs /opt/otrs-obsolete-$CURR_DATE
-
-echo "move prepared package to final location"
-mv /tmp/otrs /opt/otrs
-
-cd /opt/otrs
-./bin/otrs.SetPermissions.pl || exit 1
-
-echo "installing typically missing packages on OTRS 5 installations"
-sudo apt install -y libcss-minifier-xs-perl libjavascript-minifier-xs-perl
-
-MISSING_DPKG_CHECK=$(sudo -u otrs /opt/otrs/bin/otrs.CheckModules.pl --all|grep "Not installed" | grep -v "DBD::Oracle")
-if [ -n "$MISSING_DPKG_CHECK" ]; then
-   echo "echo packages are not installed"
-   exit 1;
-fi
-sudo -u otrs /opt/otrs/bin/otrs.Console.pl Maint::Database::Check || exit 1
-
-echo "prepare config files"
-sudo -u otrs /opt/otrs/bin/otrs.Console.pl Dev::Tools::Migrate::ConfigXMLStructure --source-directory Kernel/Config/Files
 
 echo "starting DB migration"
-sudo -u otrs ./scripts/DBUpdate-to-6.pl
+sudo -u otrs ./scripts/DBUpdate-to-6.pl || exit 1
 
+
+echo "clean caches"
 sudo -u otrs /opt/otrs/bin/otrs.Console.pl Maint::Cache::Delete
 sudo -u otrs /opt/otrs/bin/otrs.Console.pl Maint::Session::DeleteAll
+
 
 
 echo "upgrading installed packages"
 sudo -u otrs ./bin/otrs.Console.pl Admin::Package::UpgradeAll
 
-echo "preparing apache"
-a2enmod perl
-# a2enmod deflate
-a2enmod filter
-a2enmod headers
-ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-available/zzz_otrs.conf
-a2ensite zzz_otrs.conf
-
-
-exit 1
-echo installing missing packages
-
-
-mkdir -p $ZNUNY_PREPARE_DIR
-cd $ZNUNY_PREPARE_DIR
-
-wget https://download.znuny.org/releases/znuny-latest-6.0.tar.gz
-tar zxf znuny-latest-6.0.tar.gz
-find . -maxdepth 1 -type d -name znuny-6* -exec mv {} ./otrs \;
-
-cd $ZNUNY_PREPARE_DIR/otrs
-find $ZNUNY_PREPARE_DIR -type f -name \*znuny-conf-backup.tar.gz -exec tar zxf {} \;
-
-# validate if config file is at required location, fail if not
-if test -f "$CONF_FILE"; then
-   echo "$CONF_FILE exists going on..."
-else
-   echo "this seems not to be a valid OTRS/Znuny installation. Did not find $CONF_FILE"
-   exit 1
-fi
 
