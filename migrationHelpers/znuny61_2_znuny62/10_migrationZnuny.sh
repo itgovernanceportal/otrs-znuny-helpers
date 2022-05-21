@@ -82,7 +82,12 @@ pwd
 
 # Restore Kernel/Config.pm, articles, etc.
 cp -av /opt/otrs/Kernel/Config.pm ./Kernel/ || exit 1
-mv /opt/otrs/var/article/* ./var/article/ || exit 1
+
+# copy articles if existing
+article_count=$(find /opt/otrs/var/article/ -maxdepth 1 -name '*.zip' | wc -l)
+if [ $count -gt 0 ] ; then
+   mv /opt/otrs/var/article/* ./var/article/ || exit 1
+fi
 
 # Restore dotfiles from the homedir to the new directory
 for f in $(find /opt/otrs -maxdepth 1 -type f -name .\* -not -name \*.dist); do cp -av "$f" ./; done
