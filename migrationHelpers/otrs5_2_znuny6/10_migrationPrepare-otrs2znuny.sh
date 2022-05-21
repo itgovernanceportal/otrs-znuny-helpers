@@ -92,6 +92,12 @@ rm ./Config/Files/ZZZProcessManagement.pm
 cd $OTRS_INSTALL_DIR 
 cp -ra var $CONF_BAK/
 
+# Restore dotfiles from the homedir to the new directory
+echo "copy dot files '.*'"
+for f in $(find . -maxdepth 1 -type f -name \.\* -not -name \*.dist); do cp -av "$f" "$CONF_BAK/"; done
+echo "copy dot folders '.*'"
+for f in $(find . -maxdepth 1 -type d -name \.\* -not -name \*.dist|grep -v "^.$"); do cp -arv "$f" "$CONF_BAK/"; done
+
 # cleanup developer maintained var files
 cd $CONF_BAK/var
 rm -rf cron/*.dist
