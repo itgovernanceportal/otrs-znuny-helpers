@@ -116,7 +116,7 @@ cd /opt/otrs
 
 
 echo "starting DB migration"
-sudo -u otrs ./scripts/MigrateToZnuny6_2.pl || exit 1
+sudo -u otrs ./scripts/MigrateToZnuny$VER_ZNUNY_MAJOR_$VER_ZNUNY_MINOR.pl || exit 1
 
 
 echo "clean caches"
