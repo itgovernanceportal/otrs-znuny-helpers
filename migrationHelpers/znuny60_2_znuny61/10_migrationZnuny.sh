@@ -64,7 +64,8 @@ echo $OLD_VERSION
 # needed packages for znuny
 echo "installing packages missed in Znuny documentation"
 apt update
-apt install -y jq
+apt install -y jq cpanminus
+cpanm jq
 
 
 # Download latest Znuny
