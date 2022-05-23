@@ -33,17 +33,17 @@ OTRS_INSTALL_DIR=$2
 CONF_FILE_REL=/Kernel/Config.pm
 
 # validate input and  & return 1 if failed
-if [[ ! -d "$ZNUNY_PREPARE_DIR" ]]; then
-   echo "missing parameter folder Znuny preparation folder. e.g. use $0 /tmp <znunyTagetDir>"
-   exit 1
-fi
+#if [[ ! -d "$ZNUNY_PREPARE_DIR" ]]; then
+#   echo "missing parameter folder Znuny preparation folder. e.g. use $0 /tmp <znunyTagetDir>"
+#   exit 1
+#fi
 
 
 CONF_FILE=$OTRS_INSTALL_DIR/$CONF_FILE_REL
-if [[ ! -n "$OTRS_INSTALL_DIR" ]]; then
-   echo "missing parameter folder of OTRS/Znuny. e.g. $0 <prepareDir> /opt/otrs"
-   exit 1
-fi
+#if [[ ! -n "$OTRS_INSTALL_DIR" ]]; then
+#   echo "missing parameter folder of OTRS/Znuny. e.g. $0 <prepareDir> /opt/otrs"
+#   exit 1
+#fi
 
 ############################################################
 
@@ -62,6 +62,7 @@ echo $OLD_VERSION
 
 
 # needed packages for znuny
+echo "installing packages missed in Znuny documentation"
 apt update
 apt install -y libspreadsheet-xlsx-perl
 
