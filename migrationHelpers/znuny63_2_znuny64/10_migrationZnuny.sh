@@ -82,8 +82,6 @@ cd `tar ztf znuny-latest-$VER_ZNUNY_MAJOR.$VER_ZNUNY_MINOR.tar.gz |grep "znuny-$
 echo -n "current dir: "
 pwd
 
-exit 1
-
 # Set permissions
 ./bin/otrs.SetPermissions.pl || exit 1
 
