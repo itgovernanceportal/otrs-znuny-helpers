@@ -122,8 +122,7 @@ cd /opt/otrs
 ./bin/otrs.CheckModules.pl --all
 
 
-
-echo "starting DB migration"
+echo "starting DB migration, the most pain come from here...."
 sudo -u otrs ./scripts/MigrateToZnuny6_$VER_ZNUNY_MINOR.pl || exit 1
 
 
@@ -133,7 +132,7 @@ sudo -u otrs ./bin/otrs.Console.pl Maint::Session::DeleteAll
 
 
 
-echo "upgrading installed packages"
+echo "upgrading installed packages, this may fail, but you can reinstall mostly the packages"
 sudo -u otrs ./bin/otrs.Console.pl Admin::Package::UpgradeAll
 
 
