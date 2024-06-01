@@ -68,6 +68,7 @@ apt install -y jq cpanminus
 cpanm Crypt::JWT
 cpanm Crypt::OpenSSL::X509
 
+apt-get install -y libical-parser-perl
 
 
 # Download latest Znuny
