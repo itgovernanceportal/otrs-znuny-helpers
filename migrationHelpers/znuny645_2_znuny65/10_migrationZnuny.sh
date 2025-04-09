@@ -84,7 +84,7 @@ wget https://download.znuny.org/releases/znuny-latest-$VER_ZNUNY_MAJOR.$VER_ZNUN
 tar xfz znuny-latest-$VER_ZNUNY_MAJOR.$VER_ZNUNY_MINOR.tar.gz || exit 1
 
 # cd into extracted dir
-cd `tar ztf znuny-latest-$VER_ZNUNY_MAJOR.$VER_ZNUNY_MINOR.tar.gz |grep "znuny-$VER_ZNUNY_MAJOR\.$VER_ZNUNY_MINOR\../$"` || exit 1
+cd `tar ztf znuny-latest-$VER_ZNUNY_MAJOR.$VER_ZNUNY_MINOR.tar.gz |grep -E "znuny-$VER_ZNUNY_MAJOR\.$VER_ZNUNY_MINOR\...?/$"` || exit 1
 echo -n "current dir: "
 pwd
 
